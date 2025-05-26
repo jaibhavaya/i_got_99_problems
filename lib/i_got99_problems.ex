@@ -6,8 +6,9 @@ defmodule IGot99Problems do
 
   """
 
+  # 1
   @doc """
-  1. Retrieves the last item of a list
+  Retrieves the last item of a list
 
   ## Examples
 
@@ -21,22 +22,28 @@ defmodule IGot99Problems do
   def last([x]), do: x
   def last([_ | t]), do: last(t)
 
+  # 2
   @doc """
-  2. Retrieves the last two items of a list
+  Retrieves the last two items of a list
 
   ## Examples
 
       iex> IGot99Problems.last_two([1,2,3,4])
-      [3,4]
+      { 3,4 }
+      iex> IGot99Problems.last_two([1])
+      { nil, 1 }
+      iex> IGot99Problems.last_two([])
+      { nil, nil }
 
   """
-  def last_two([]), do: []
-  def last_two([x]), do: x
-  def last_two([x, y]), do: [x, y]
+  def last_two([]), do: {nil, nil}
+  def last_two([x]), do: {nil, x}
+  def last_two([x, y]), do: {x, y}
   def last_two([_ | t]), do: last_two(t)
 
+  # 3
   @doc """
-  3. Retrieves the nth item of the list
+  Retrieves the nth item of the list
 
   ## Examples
 
@@ -48,8 +55,9 @@ defmodule IGot99Problems do
   def at(0, [x | _]), do: x
   def at(i, [_ | t]), do: at(i - 1, t)
 
+  # 4
   @doc """
-  4. Calculates the length of a list
+  Calculates the length of a list
 
   ## Examples
 
@@ -63,8 +71,9 @@ defmodule IGot99Problems do
   def length(idx, []), do: idx
   def length(idx, [_ | t]), do: length(idx + 1, t)
 
+  # 5
   @doc """
-  5. Reverses a list
+  Reverses a list
 
   ## Examples
 
@@ -78,8 +87,9 @@ defmodule IGot99Problems do
   def reverse(acc, []), do: acc
   def reverse(acc, [x | t]), do: reverse([x | acc], t)
 
+  # 6
   @doc """
-  6. Checks if the list is a palindrome
+  Checks if the list is a palindrome
 
   ## Examples
 
@@ -98,8 +108,9 @@ defmodule IGot99Problems do
   def palindrome?([r | rt], [l | lt]) when r == l, do: palindrome?(rt, lt)
   def palindrome?(_, _), do: false
 
+  # 7
   @doc """
-  7. Flattens a list
+  Flattens a list
 
   ## Examples
 
@@ -118,8 +129,9 @@ defmodule IGot99Problems do
   def flatten(acc, [x | t]) when is_list(x), do: flatten(flatten(acc, x), t)
   def flatten(acc, [x | t]), do: flatten([x | acc], t)
 
+  # 8
   @doc """
-  8. Eliminates consecutive duplicates in a list
+  Eliminates consecutive duplicates in a list
 
   ## Examples
 
@@ -136,18 +148,10 @@ defmodule IGot99Problems do
   def compress([x, x | t]), do: compress([x | t])
   def compress([x, y | t]), do: [x | compress([y | t])]
 
+  # 9
   @doc """
-  9. Pack consecutive duplicates into sublists
+  Pack consecutive duplicates into sublists
   TODO
-
-  ## Examples
-
-      iex> IGot99Problems.pack([])
-      []
-      iex> IGot99Problems.pack([1,2,3,4])
-      [1,2,3,4]
-      iex> IGot99Problems.pack([1, 2, 2, 3, 4])
-      [1,[2, 2],3,4]
 
   """
   def pack([]), do: []
