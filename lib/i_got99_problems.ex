@@ -29,16 +29,16 @@ defmodule IGot99Problems do
   ## Examples
 
       iex> IGot99Problems.last_two([1,2,3,4])
-      { 3,4 }
+      [ 3,4 ]
       iex> IGot99Problems.last_two([1])
-      { nil, 1 }
+      [ nil, 1 ]
       iex> IGot99Problems.last_two([])
-      { nil, nil }
+      [ nil, nil ]
 
   """
-  def last_two([]), do: {nil, nil}
-  def last_two([x]), do: {nil, x}
-  def last_two([x, y]), do: {x, y}
+  def last_two([]), do: [nil, nil]
+  def last_two([x]), do: [nil, x]
+  def last_two([x, y]), do: [x, y]
   def last_two([_ | t]), do: last_two(t)
 
   # 3
