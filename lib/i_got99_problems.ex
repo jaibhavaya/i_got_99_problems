@@ -6,6 +6,10 @@ defmodule IGot99Problems do
 
   """
 
+  def trace(method) do
+    Rexbug.start("IGot99Problems#{method}/_ :: return")
+  end
+
   # 1
   @doc """
   Retrieves the last item of a list
@@ -20,7 +24,7 @@ defmodule IGot99Problems do
   """
   def last([]), do: nil
   def last([x]), do: x
-  def last([_ | t]), do: last(t)
+  def last([_ | t]), do: t |> last
 
   # 2
   @doc """
@@ -39,7 +43,7 @@ defmodule IGot99Problems do
   def last_two([]), do: [nil, nil]
   def last_two([x]), do: [nil, x]
   def last_two([x, y]), do: [x, y]
-  def last_two([_ | t]), do: last_two(t)
+  def last_two([_ | t]), do: t |> last_two
 
   # 3
   @doc """
@@ -81,7 +85,7 @@ defmodule IGot99Problems do
       [4,3,2,1]
 
   """
-  def reverse(list), do: reverse([], list)
+  def reverse(list), do: [] |> reverse(list)
 
   @doc false
   def reverse(acc, []), do: acc
@@ -101,11 +105,11 @@ defmodule IGot99Problems do
       true
 
   """
-  def palindrome?(list), do: palindrome?(reverse(list), list)
+  def palindrome?(list), do: list |> reverse |> palindrome?(list)
 
   @doc false
   def palindrome?([], []), do: true
-  def palindrome?([r | rt], [l | lt]) when r == l, do: palindrome?(rt, lt)
+  def palindrome?([r | rt], [l | lt]) when r == l, do: rt |> palindrome?(lt)
   def palindrome?(_, _), do: false
 
   # 7
@@ -122,12 +126,12 @@ defmodule IGot99Problems do
       [1,2]
 
   """
-  def flatten(list), do: reverse(flatten([], list))
+  def flatten(list), do: [] |> flatten(list) |> reverse
 
   @doc false
   def flatten(acc, []), do: acc
-  def flatten(acc, [x | t]) when is_list(x), do: flatten(flatten(acc, x), t)
-  def flatten(acc, [x | t]), do: flatten([x | acc], t)
+  def flatten(acc, [x | t]) when is_list(x), do: acc |> flatten(x) |> flatten(t)
+  def flatten(acc, [x | t]), do: [x | acc] |> flatten(t)
 
   # 8
   @doc """
@@ -145,14 +149,168 @@ defmodule IGot99Problems do
   """
   def compress([]), do: []
   def compress([x]), do: [x]
-  def compress([x, x | t]), do: compress([x | t])
-  def compress([x, y | t]), do: [x | compress([y | t])]
+  def compress([x, x | t]), do: [x | t] |> compress
+  def compress([x, y | t]), do: [x | [y | t] |> compress]
 
   # 9
   @doc """
   Pack consecutive duplicates into sublists
-  TODO
+
+  ## Examples
+
+      iex> IGot99Problems.pack([1,2,3,4])
+      [[1],[2],[3],[4]]
+      iex> IGot99Problems.pack([1,2,2,3,4])
+      [[1],[2,2],[3],[4]]
 
   """
-  def pack([]), do: []
+  def pack(list), do: pack([], [], list) |> reverse
+
+  @doc false
+  def pack(acc, [], []), do: acc
+  def pack(acc, current, [x]), do: [[x | current] | acc]
+  def pack(acc, current, [x, x | t]), do: pack(acc, [x | current], [x | t])
+  def pack(acc, current, [x, y | t]), do: pack([[x | current] | acc], [], [y | t])
+
+  # 10
+  @doc """
+  Run length encoding
+
+  ## Examples
+
+      iex> IGot99Problems.encode([1,2,3,4])
+      [{1,1},{1,2},{1,3},{1,4}]
+      iex> IGot99Problems.encode([1,2,2,3,4])
+      [{1,1},{2,2},{1,3},{1,4}]
+
+  """
+  def encode(list), do: encode([], 0, list) |> reverse
+
+  @doc false
+  def encode(acc, 0, []), do: acc
+  def encode(acc, count, [x]), do: [{count + 1, x} | acc]
+  def encode(acc, count, [x, x | t]), do: encode(acc, count + 1, [x | t])
+  def encode(acc, count, [x, y | t]), do: encode([{count + 1, x} | acc], 0, [y | t])
+
+  # 11
+  @doc """
+  Modified run length encoding
+
+  ## Examples
+
+      iex> IGot99Problems.modified_encode([1,2,3,4])
+      [1,2,3,4]
+      iex> IGot99Problems.modified_encode([1,2,2,3,4])
+      [1,{2,2},3,4]
+
+  """
+  def modified_encode(list), do: modified_encode([], 0, list) |> reverse
+
+  @doc false
+  def modified_encode(acc, 0, []), do: acc
+  def modified_encode(acc, count, [x]), do: [create(count + 1, x) | acc]
+
+  def modified_encode(acc, count, [x, x | t]), do: modified_encode(acc, count + 1, [x | t])
+
+  def modified_encode(acc, count, [x, y | t]),
+    do: modified_encode([create(count + 1, x) | acc], 0, [y | t])
+
+  defp create(1, elem), do: elem
+  defp create(count, elem), do: {count, elem}
+
+  # 12
+  @doc """
+  Decode run length encoding
+
+  ## Examples
+
+      iex> IGot99Problems.decode([1,2,3,4])
+      [1,2,3,4]
+      iex> IGot99Problems.decode([1,{2,2},3,4])
+      [1,2,2,3,4]
+
+  """
+  def decode(list), do: decode([], list) |> reverse
+
+  @doc false
+  def decode(acc, []), do: acc
+  def decode(acc, [x]), do: acc |> add_to_acc(x)
+  def decode(acc, [x | t]), do: acc |> add_to_acc(x) |> decode(t)
+
+  defp add_to_acc(acc, {0, _}), do: acc
+  defp add_to_acc(acc, {count, elem}), do: [elem | acc] |> add_to_acc({count - 1, elem})
+  defp add_to_acc(acc, elem), do: [elem | acc]
+
+  # 13 (already done, was an optimization to run length encoding, but the optimization was the way I originally solved it.
+
+  # 14
+  @doc """
+  Duplicate elements of list
+
+  ## Examples
+
+      iex> IGot99Problems.duplicate([1,2,3,4])
+      [1,1,2,2,3,3,4,4]
+
+  """
+  def duplicate(list), do: [] |> duplicate(list) |> reverse
+
+  @doc false
+  def duplicate(acc, []), do: acc
+  def duplicate(acc, [x]), do: [x | [x | acc]]
+  def duplicate(acc, [x | t]), do: duplicate([x | [x | acc]], t)
+
+  # 15
+  @doc """
+  Replicate elements of list n times
+
+  ## Examples
+
+      iex> IGot99Problems.replicate([1,2,3,4], 3)
+      [1,1,1,2,2,2,3,3,3,4,4,4]
+      iex> IGot99Problems.replicate([1,2,3,4], 1)
+      [1,2,3,4]
+
+  """
+  def replicate(list, n), do: [] |> replicate(list, n) |> reverse
+
+  @doc false
+  def replicate(acc, [], _), do: acc
+  def replicate(acc, [x | t], n), do: acc |> to_acc(x, n) |> replicate(t, n)
+
+  defp to_acc(acc, _, 0), do: acc
+  defp to_acc(acc, x, n), do: [x | acc] |> to_acc(x, n - 1)
+
+  # 16
+  @doc """
+  Drop every nth element of list
+
+  ## Examples
+
+      iex> IGot99Problems.drop_every([1,2,3,4], 2)
+      [1,3]
+
+  """
+  def drop_every(list, n), do: [] |> drop_every(list, n, n) |> reverse
+
+  @doc false
+  def drop_every(acc, [], _n, _counter), do: acc
+  def drop_every(acc, [_ | t], n, 1), do: acc |> drop_every(t, n, n)
+  def drop_every(acc, [h | t], n, counter), do: [h | acc] |> drop_every(t, n, counter - 1)
+
+  # 17
+  @doc """
+  Split string at given length
+
+  ## Examples
+
+      iex> IGot99Problems.split([1,2,3,4], 2)
+      {[1,2],[3,4]}
+
+  """
+  def split(list, n), do: [] |> split(list, n)
+
+  def split(acc, [], _), do: {acc, []}
+  def split(acc, [h | t], 1), do: {[h | acc] |> reverse, t}
+  def split(acc, [h | t], n), do: split([h | acc], t, n - 1)
 end
