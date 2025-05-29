@@ -300,9 +300,9 @@ defmodule IGot99Problems do
 
   # 17
   @doc """
-  Split string at given length
+  split list at given length
 
-  ## Examples
+  ## examples
 
       iex> IGot99Problems.split([1,2,3,4], 2)
       {[1,2],[3,4]}
@@ -313,4 +313,106 @@ defmodule IGot99Problems do
   def split(acc, [], _), do: {acc, []}
   def split(acc, [h | t], 1), do: {[h | acc] |> reverse, t}
   def split(acc, [h | t], n), do: split([h | acc], t, n - 1)
+
+  # 18
+  @doc """
+  slice list from start idx to end idx
+
+  ## examples
+
+      iex> IGot99Problems.slice([1,2,3,4, 5, 6, 7], 2, 5)
+      [3,4,5,6]
+
+  """
+  def slice(list, b, e), do: [] |> slice(list, b, e, 0) |> reverse
+
+  @doc false
+  def slice(acc, [], _, _, _), do: acc
+
+  def slice(acc, [h | t], b, e, current) when b <= current and current <= e,
+    do: slice([h | acc], t, b, e, current + 1)
+
+  def slice(acc, [_ | t], b, e, current), do: slice(acc, t, b, e, current + 1)
+
+  def slice(acc, _, _, _, _), do: acc
+
+  # 19
+  @doc """
+  rotates a list at given index
+
+  ## examples
+
+      iex> IGot99Problems.rotate([1,2,3,4, 5, 6, 7], 2)
+      [3,4,5,6,7,1,2]
+
+  """
+  def rotate(list, n), do: [] |> rotate(list, n, 0)
+
+  @doc false
+  def rotate(acc, [], _, _), do: acc
+
+  def rotate(acc, [h | t], n, current) when current == n,
+    do: [h | t] ++ (acc |> reverse)
+
+  def rotate(acc, [h | t], n, current), do: rotate([h | acc], t, n, current + 1)
+
+  # 20
+  @doc """
+  removes the n'th element from a list
+
+  ## examples
+
+      iex> IGot99Problems.remove_at([1,2,3,4, 5, 6, 7], 2)
+      [1,2,4,5,6,7]
+
+  """
+  def remove_at(list, n), do: [] |> remove_at(list, n, 0)
+
+  @doc false
+  def remove_at(acc, [], _, _), do: acc
+
+  def remove_at(acc, [_ | t], n, current) when current == n,
+    do: (acc |> reverse) ++ t
+
+  def remove_at(acc, [h | t], n, current), do: remove_at([h | acc], t, n, current + 1)
+
+  # 21
+  @doc """
+  inserts an element into a list at a given index
+
+  ## examples
+
+      iex> IGot99Problems.insert_at(100, 3, [1,2,3,4, 5, 6,7])
+      [1,2,3,100,4,5,6,7]
+
+  """
+  def insert_at(item, n, list), do: [] |> insert_at(item, n, list, 0)
+
+  @doc false
+  def insert_at(acc, _, _, [], _), do: acc
+
+  def insert_at(acc, item, n, [h | t], current) when current == n,
+    do: (acc |> reverse) ++ [item, h] ++ t
+
+  def insert_at(acc, item, n, [h | t], current), do: insert_at([h | acc], item, n, t, current + 1)
+
+  # 22
+  @doc """
+  creates a list of the integers in the given range
+
+  ## examples
+
+      iex> IGot99Problems.range(2,7)
+      [2,3,4,5,6,7]
+
+  """
+  def range(b, e), do: [] |> range(b, e, 0) |> reverse
+
+  @doc false
+  def range(acc, _, e, current) when current > e, do: acc
+
+  def range(acc, b, e, current) when b <= current and current <= e,
+    do: range([current | acc], b, e, current + 1)
+
+  def range(acc, b, e, current), do: range(acc, b, e, current + 1)
 end
