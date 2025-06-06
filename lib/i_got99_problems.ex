@@ -412,4 +412,25 @@ defmodule IGot99Problems do
     do: range([current | acc], b, e, current + 1)
 
   def range(acc, b, e, current), do: range(acc, b, e, current + 1)
+
+  # 23
+  @doc """
+  selects n number of random elements from a list
+  """
+  def random(list, n), do: [] |> random(list, n) |> reverse
+
+  def random(acc, _list, 0), do: acc
+
+  def random(acc, list, n) do
+    len = IGot99Problems.length(list)
+    n = min(n, len)
+    IO.puts(n)
+    {picked, rest} = extract_rand(list, len)
+    random(picked ++ acc, rest, n - 1)
+  end
+
+  defp extract_rand(list, len), do: [] |> extract(list, Enum.random(0..len))
+
+  defp extract(acc, list, 0), do: {acc, list}
+  defp extract(acc, [h | t], n), do: extract([h | acc], t, n - 1)
 end
