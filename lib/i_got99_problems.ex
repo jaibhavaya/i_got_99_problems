@@ -65,15 +65,12 @@ defmodule IGot99Problems do
 
   ## Examples
 
-      iex> IGot99Problems.length([1,2,3,4])
+      iex> IGot99Problems.len([1,2,3,4])
       4
 
   """
-  def length(list), do: length(0, list)
-
-  @doc false
-  def length(idx, []), do: idx
-  def length(idx, [_ | t]), do: length(idx + 1, t)
+  def len([]), do: 0
+  def len([_ | t]), do: 1 + len(t)
 
   # 5
   @doc """
